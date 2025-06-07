@@ -1,0 +1,40 @@
+from tradingview_ta import Interval
+
+SCREENER = {
+    "america": "United States",
+    "indonesia": "Indonesia",
+    "india": "India",
+    "italy": "Italy",
+    "uk": "United Kingdom",
+    "brazil": "Brazil",
+    "vietnam": "Vietnam",
+    "rsa": "South Africa",
+    "ksa": "Saudi Arabia",
+    "australia": "Australia",
+    "russia": "Russia",
+    "thailand": "Thailand",
+    "philippines": "Philippines",
+    "taiwan": "Taiwan",
+    "sweden": "Sweden",
+    "france": "France",
+    "turkey": "Turkey",
+    "euronext": "Euronext",
+    "germany": "Germany",
+    "spain": "Spain",
+    "hongkong": "Hong Kong",
+    "korea": "South Korea",
+    "malaysia": "Malaysia",
+    "canada": "Canada",
+}
+
+interval_options = [
+    Interval.INTERVAL_1_MINUTE,
+    Interval.INTERVAL_5_MINUTES,
+    Interval.INTERVAL_15_MINUTES,
+    Interval.INTERVAL_30_MINUTES,
+    Interval.INTERVAL_1_HOUR,
+    Interval.INTERVAL_4_HOURS,
+    Interval.INTERVAL_1_DAY,
+    Interval.INTERVAL_1_WEEK,
+    Interval.INTERVAL_1_MONTH,
+]

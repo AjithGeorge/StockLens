@@ -1,0 +1,11 @@
+anthropic
+yfinance
+pandas
+numpy
+requests
+smolagents
+smolagents[litellm]
+duckduckgo-search
+pandas-ta
+tradingview_ta
+gradio[mcp]

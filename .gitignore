@@ -1,0 +1,66 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.env.bak/
+.venv/
+env/
+ENV/
+env.bak/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs and runtime files
+*.log
+*.pid
+*.swp
+*.swo
+
+# Test coverage
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# pipenv/poetry
+Pipfile.lock
+poetry.lock
+
+# mypy, pyre, and pylint
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Local dev tools (optional)
+*.sqlite3
+*.db
+*.pkl
