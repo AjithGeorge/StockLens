@@ -9,3 +9,10 @@ duckduckgo-search
 pandas-ta
 tradingview_ta
 gradio[mcp]
+matplotlib
+scipy
+tabulate
+plotly
+seaborn
+QuantStats
+IPython
