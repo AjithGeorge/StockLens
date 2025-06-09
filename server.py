@@ -47,7 +47,24 @@ def get_technical_analysis(
         return {"Error": str(e)}
 
 
-def get_comparison_details_and_generate_report(symbol: str, benchmark: str):
+def get_performance_snapshot(symbol) -> Image:
+    """Get the symbol performance snapshot and returns plot image.
+
+    Args:
+    data (Series:[float])
+
+    Returns:
+    Image of the performance snapshot is returned
+    """
+    _data = qs.utils.download_returns(symbol)
+
+    snapshot_buf = BytesIO()
+    qs.plots.snapshot(_data, title="Performance", savefig=snapshot_buf)
+    snapshot_buf.seek(0)
+    return Image.open(snapshot_buf)
+
+
+def get_comparison_report(symbol: str, benchmark: str):
     """Get the symbol performance against provided benchmark and return plots and HTML report content.
 
     Args:
@@ -56,18 +73,6 @@ def get_comparison_details_and_generate_report(symbol: str, benchmark: str):
     """
 
     data = qs.utils.download_returns(symbol)
-
-    # Snapshot plot to in-memory image
-    snapshot_buf = BytesIO()
-    qs.plots.snapshot(data, title="Performance", savefig=snapshot_buf)
-    snapshot_buf.seek(0)
-    snapshot_img = Image.open(snapshot_buf)
-
-    # Yearly returns plot to in-memory image
-    returns_buf = BytesIO()
-    qs.plots.yearly_returns(data, benchmark=benchmark, savefig=returns_buf)
-    returns_buf.seek(0)
-    returns_img = Image.open(returns_buf)
 
     # Generate and read HTML report
     report_path = "performance_report.html"
@@ -81,22 +86,21 @@ def get_comparison_details_and_generate_report(symbol: str, benchmark: str):
     with open(report_path, "r", encoding="utf-8") as file:
         report_content = file.read()
 
-    return snapshot_img, returns_img, report_content, report_path
-
-
-def gradio_interface(symbol: str, benchmark: str):
-    """Gradio interface function to generate and display the report and plots."""
-    snapshot_img, returns_img, report_content, report_path = (
-        get_comparison_details_and_generate_report(symbol, benchmark)
-    )
-    return snapshot_img, report_content, report_path, returns_img
+    return report_content, report_path
 
 
 with gr.Blocks() as demo:
-    gr.Markdown("# Stock Analyzer")
-    gr.Markdown("Get Analyst ratings and technical indicator details")
+    gr.Markdown("# Stock-lens🔎")
+    gr.Markdown(
+        "Get Analyst ratings and technical indicator details📈. Get Comparison of your favourite stocks ⚖"
+    )
 
     with gr.Tab("Technical Analysis"):
+
+        gr.Markdown("# Analyst Ratings and Technical Indicators")
+        gr.Markdown(
+            "Enter a stock symbol,exchange,screener and interval to see the tecnical indicator details."
+        )
         symbol_input = gr.Textbox(
             label="Ticker/Symbol (e.g., AAPL,MSFT,GOOGL)",
         )
@@ -117,7 +121,7 @@ with gr.Blocks() as demo:
         )
 
     with gr.Tab("Performance Comparison"):
-        with gr.Blocks() as interface:
+        with gr.Blocks():
             gr.Markdown("# Stock Performance Analyzer")
             gr.Markdown(
                 "Enter a stock symbol and a benchmark to generate a performance report and snapshot."
@@ -131,35 +135,24 @@ with gr.Blocks() as demo:
                         info="Some symbols may require a dot(.)suffix of corresponding exchange as TCS.NS",
                     )
                     benchmark_input = gr.Textbox(
-                        label="Benchmark Symbol (e.g., ^DJI,^NSEI,^UKX,SPY)",
+                        label="Benchmark Symbol (e.g., ^DJI,^NSEI,^FTSE,SPY)",
                         placeholder="Enter benchmark symbol",
                         info="For index use (^) as that is the accepted format. It can also be other valid stocks/symbols too.",
                     )
 
                     generate_button = gr.Button("Generate Report", variant="primary")
-                    returns_output = gr.Image(label="Yearly Returns")
 
-                with gr.Column():
                     download_button = gr.File(label="Download Report")
-                    snapshot_output = gr.Image(label="Performance Snapshot")
 
             with gr.Row():
                 report_output = gr.HTML(label="Performance Report")
 
-            def generate_report(symbol, benchmark):
-                snapshot_img, report_html, report_path, returns_img = gradio_interface(
-                    symbol, benchmark
-                )
-                return snapshot_img, report_html, report_path, returns_img
-
             generate_button.click(
-                generate_report,
+                fn=get_comparison_report,
                 inputs=[symbol_input, benchmark_input],
                 outputs=[
-                    snapshot_output,
                     report_output,
                     download_button,
-                    returns_output,
                 ],
             )
 
