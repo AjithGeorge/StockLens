@@ -47,7 +47,7 @@ def get_technical_analysis(
         return {"Error": str(e)}
 
 
-def get_comparison_report(symbol: str, benchmark: str):
+def get_comparison_details_and_generate_report(symbol: str, benchmark: str):
     """Get the symbol performance against provided benchmark and return plots and HTML report content.
 
     Args:
@@ -86,8 +86,8 @@ def get_comparison_report(symbol: str, benchmark: str):
 
 def gradio_interface(symbol: str, benchmark: str):
     """Gradio interface function to generate and display the report and plots."""
-    snapshot_img, returns_img, report_content, report_path = get_comparison_report(
-        symbol, benchmark
+    snapshot_img, returns_img, report_content, report_path = (
+        get_comparison_details_and_generate_report(symbol, benchmark)
     )
     return snapshot_img, report_content, report_path, returns_img
 
