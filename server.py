@@ -2,6 +2,8 @@ import gradio as gr
 from tradingview_ta import TA_Handler
 from config import SCREENER, interval_options
 import quantstats as qs
+from io import BytesIO
+from PIL import Image
 
 qs.extend_pandas()
 
@@ -46,50 +48,48 @@ def get_technical_analysis(
 
 
 def get_comparison_report(symbol: str, benchmark: str):
-    """Get the symbol performance against provided benchmark and return paths to the report and plot.
+    """Get the symbol performance against provided benchmark and return plots and HTML report content.
 
     Args:
-        symbol (str): Ticker symbol to be analyzed (e.g., "AAPL", "TSLA").
-        benchmark (str): Benchmark symbol (e.g., "^DJI", "SPY").
-
-    Returns:
-        tuple: Paths to the generated HTML report and snapshot plot.
+    symbol (str): Ticker symbol to be analyzed (e.g., "AAPL", "TSLA").
+    benchmark (str): Benchmark symbol (e.g., "^DJI", "SPY").
     """
+
     data = qs.utils.download_returns(symbol)
 
-    # Generate and save the snapshot plot
-    snapshot_path = "performance_snapshot.png"
-    qs.plots.snapshot(data, title=" Performance", savefig=snapshot_path)
+    # Snapshot plot to in-memory image
+    snapshot_buf = BytesIO()
+    qs.plots.snapshot(data, title="Performance", savefig=snapshot_buf)
+    snapshot_buf.seek(0)
+    snapshot_img = Image.open(snapshot_buf)
 
-    returns_path = "returns.png"
-    qs.plots.yearly_returns(data, benchmark=benchmark, savefig=returns_path)
+    # Yearly returns plot to in-memory image
+    returns_buf = BytesIO()
+    qs.plots.yearly_returns(data, benchmark=benchmark, savefig=returns_buf)
+    returns_buf.seek(0)
+    returns_img = Image.open(returns_buf)
 
-    # Generate and save the HTML report
+    # Generate and read HTML report
     report_path = "performance_report.html"
     qs.reports.html(
         data,
         benchmark=benchmark,
         output=report_path,
         strategy_title=symbol,
+        title="Detailed Comparison",
     )
-
-    return snapshot_path, report_path, returns_path
-
-
-def gradio_interface(symbol: str, benchmark: str):
-    """Gradio interface function to generate and display the report and plot."""
-    snapshot_path, report_path, returns_path = get_comparison_report(symbol, benchmark)
-
-    # Read the HTML report content
     with open(report_path, "r", encoding="utf-8") as file:
         report_content = file.read()
 
-    return (
-        snapshot_path,
-        report_content,
-        report_path,
-        returns_path,
+    return snapshot_img, returns_img, report_content, report_path
+
+
+def gradio_interface(symbol: str, benchmark: str):
+    """Gradio interface function to generate and display the report and plots."""
+    snapshot_img, returns_img, report_content, report_path = get_comparison_report(
+        symbol, benchmark
     )
+    return snapshot_img, report_content, report_path, returns_img
 
 
 with gr.Blocks() as demo:
@@ -126,14 +126,14 @@ with gr.Blocks() as demo:
             with gr.Row():
                 with gr.Column():
                     symbol_input = gr.Textbox(
-                        label="Stock Symbol (e.g., TSLA,NSFT,AAPL)",
+                        label="Stock Symbol (e.g., TSLA,MSFT,AAPL)",
                         placeholder="Enter stock symbol",
                         info="Some symbols may require a dot(.)suffix of corresponding exchange as TCS.NS",
                     )
                     benchmark_input = gr.Textbox(
                         label="Benchmark Symbol (e.g., ^DJI,^NSEI,^UKX,SPY)",
                         placeholder="Enter benchmark symbol",
-                        info="For index use (^) as that is the accepted format.It can also be other valid stocks/symbols too.",
+                        info="For index use (^) as that is the accepted format. It can also be other valid stocks/symbols too.",
                     )
 
                     generate_button = gr.Button("Generate Report", variant="primary")
@@ -147,15 +147,10 @@ with gr.Blocks() as demo:
                 report_output = gr.HTML(label="Performance Report")
 
             def generate_report(symbol, benchmark):
-                snapshot_path, report_content, report_path, returns_path = (
-                    gradio_interface(symbol, benchmark)
+                snapshot_img, report_html, report_path, returns_img = gradio_interface(
+                    symbol, benchmark
                 )
-                return (
-                    snapshot_path,
-                    report_content,
-                    report_path,
-                    returns_path,
-                )
+                return snapshot_img, report_html, report_path, returns_img
 
             generate_button.click(
                 generate_report,
