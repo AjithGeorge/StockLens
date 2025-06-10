@@ -1,6 +1,7 @@
 from tradingview_ta import Interval
 
 SCREENER = {
+    "None": "Select an option",
     "america": "United States",
     "indonesia": "Indonesia",
     "india": "India",
@@ -28,13 +29,13 @@ SCREENER = {
 }
 
 interval_options = [
+    Interval.INTERVAL_1_DAY,
+    Interval.INTERVAL_1_MONTH,
     Interval.INTERVAL_1_MINUTE,
     Interval.INTERVAL_5_MINUTES,
     Interval.INTERVAL_15_MINUTES,
     Interval.INTERVAL_30_MINUTES,
     Interval.INTERVAL_1_HOUR,
     Interval.INTERVAL_4_HOURS,
-    Interval.INTERVAL_1_DAY,
     Interval.INTERVAL_1_WEEK,
-    Interval.INTERVAL_1_MONTH,
 ]
