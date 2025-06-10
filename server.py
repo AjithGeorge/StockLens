@@ -9,24 +9,29 @@ qs.extend_pandas()
 
 
 def get_technical_analysis(
-    symbol: str, exchange: str, screener: str, interval: str
+    symbol: str, exchange: str, country: str, interval: str
 ) -> dict[str:any]:
     """Get the technical analysis for the given symbol.
 
     Args:
-        symbol(str):  Ticker symbol which is to be analyzed (e.g., "AAPL","MSFT","VOD").
-        exchange(str): Exchange at which the tikcer is traded (e.g., "NASDAQ", "NSE", "LSE").
-        screener(str): The exchange's country as the screener (e.g., "america", "india", "uk").The possible values are listed in the config.py file
-        interval(str): The time interval for the analysis (e.g., "1d", "1h", "15m").The possible values are listed in the config.py file
+        symbol(str):Required:  Ticker symbol which is to be analyzed (e.g., "AAPL","MSFT","VOD").
+        exchange(str):Required: Exchange at which the tikcer is traded (e.g., "NASDAQ", "NSE", "LSE").
+        country(str):Required: The exchange's country (e.g., "america", "india", "uk").The possible values are listed in the config.py file
+        interval(str):Required: The time interval for the analysis (e.g., "1d", "1h", "15m").The possible values are listed in the config.py file
 
     Returns:
        dict: Technical analysis for the symbol/ticker for the given period. Returns a dict containing the analysis.
     """
+
     try:
-        screener = list(SCREENER.keys())[screener]
+        symbol = symbol.split(".")[0]
+        country = list(SCREENER.keys())[country]
+        if country == None or country == "None":
+            raise ValueError("Country is required!")
+
         handler = TA_Handler(
             symbol=symbol,
-            screener=screener,
+            screener=country,
             exchange=exchange,
             interval=interval,
         )
@@ -92,23 +97,24 @@ def get_comparison_report(symbol: str, benchmark: str):
 with gr.Blocks() as demo:
     gr.Markdown("# Stock-lens🔎")
     gr.Markdown(
-        "Get Analyst ratings and technical indicator details📈. Get Comparison of your favourite stocks ⚖"
+        "Get Analyst ratings and technical indicator details📈. Get Comparison of your favourite stocks 🏆"
     )
 
     with gr.Tab("Technical Analysis"):
 
         gr.Markdown("# Analyst Ratings and Technical Indicators")
         gr.Markdown(
-            "Enter a stock symbol,exchange,screener and interval to see the tecnical indicator details."
+            "Enter a stock symbol,exchange,country and interval to see the tecnical indicator details."
         )
         symbol_input = gr.Textbox(
-            label="Ticker/Symbol (e.g., AAPL,MSFT,GOOGL)",
+            label="Ticker/Symbol* (e.g., AAPL,MSFT,GOOGL)",
         )
-        exchange_input = gr.Textbox(label="Exchange (e.g., NASDAQ, NSE, LSE)")
-        screener_input = gr.Dropdown(
+        exchange_input = gr.Textbox(label="Exchange* (e.g., NASDAQ, NSE, LSE)")
+        country_input = gr.Dropdown(
             choices=SCREENER.values(),
-            label="Screener (for stocks, enter the exchange's country as the screener)",
+            label="Country* (e.g.,United States,India)",
             type="index",
+            value=None,
         )
         interval_input = gr.Dropdown(interval_options, label="Select Interval:")
         submit_button = gr.Button("Generate Analysis", variant="primary")
@@ -116,7 +122,7 @@ with gr.Blocks() as demo:
 
         submit_button.click(
             fn=get_technical_analysis,
-            inputs=[symbol_input, exchange_input, screener_input, interval_input],
+            inputs=[symbol_input, exchange_input, country_input, interval_input],
             outputs=output_json,
         )
 
