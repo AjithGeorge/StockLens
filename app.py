@@ -27,7 +27,7 @@ import yfinance as yf
 client = LiteLLMModel(
     model="claude-sonnet-4-20250514",
     api_base="https://api.anthropic.com",
-    api_key="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",
+    api_key="",
 )
 technical_analysis_tool = Tool.from_space(
     "http://127.0.0.1:7860",
