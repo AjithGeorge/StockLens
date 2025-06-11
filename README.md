@@ -5,7 +5,7 @@ colorFrom: green
 colorTo: purple
 sdk: gradio
 sdk_version: 5.33.0
-app_file: app.py
+app_file: agent.py
 pinned: true
 short_description: Analyst ratings,technical indicators,performance reports
 tags:
@@ -25,14 +25,5 @@ Lets go ahead and analyze some stocks!!
 - 
 ## Agentic Demo
 ![image/webp](https://cdn-uploads.huggingface.co/production/uploads/67a5eae0ca164d3c942cf401/_dXOpN9Pho_wIGfY1No3q.webp)
-
-## Demo-Performace/Benchmark Comparison
-
-![image/webp](https://cdn-uploads.huggingface.co/production/uploads/67a5eae0ca164d3c942cf401/alFZWVYndZKLiLkGMSQ3q.webp)
-
-
-## Demo-Technical Analysis
-
-![image/webp](https://cdn-uploads.huggingface.co/production/uploads/67a5eae0ca164d3c942cf401/iuXOsP83gyxwwvl4JyUWu.webp)
 
 
