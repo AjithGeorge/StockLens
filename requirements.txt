@@ -16,3 +16,10 @@ plotly
 seaborn
 QuantStats
 IPython
+langgraph 
+langchain_openai
+langchain_community
+wikipedia-api
+markdownify
+langchain_ollama
+langfuse
