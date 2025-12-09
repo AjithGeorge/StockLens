@@ -1,6 +1,8 @@
 Hosted in Huggingface:
 <br>
-Agent: [stock-lens-agent](https://huggingface.co/spaces/a-ge/stock-lens-agent)
+Agent: [stock-lens-agent](https://huggingface.co/spaces/Agents-MCP-Hackathon/stock-lens)
+<br>
+Agent: [stock-lens-agent- alternate](https://huggingface.co/spaces/a-ge/stock-lens-agent)
 <br>
 MCP-Server: [stock-lens-mcp](https://huggingface.co/spaces/a-ge/stock-lens)
 
@@ -18,5 +20,6 @@ Lets go ahead and analyze some stocks!!
 
 ## Agentic Demo
 ![image/webp](https://cdn-uploads.huggingface.co/production/uploads/67a5eae0ca164d3c942cf401/_dXOpN9Pho_wIGfY1No3q.webp)
+
 
 
